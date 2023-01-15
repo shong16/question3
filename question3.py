@@ -44,36 +44,51 @@ Y=data['Adaptivity Level_n']
 from sklearn.model_selection import train_test_split
 X_train, X_test, Y_train, Y_test=train_test_split(X,Y,test_size=0.2,random_state=10)
 
-#Decision Tree training
+#Model 1: Decision Tree Model
 from sklearn import tree
-decision_tree_model=tree.DecisionTreeClassifier(max_depth=4)
+decision_tree_model=tree.DecisionTreeClassifier()
 decision_tree_model.fit(X_train,Y_train)
-print(decision_tree_model.get_params())
+
+#Model 2:
+from sklearn.ensemble import RandomForestClassifier
+random_forest_model=RandomForestClassifier()
+random_forest_model.fit(X_train,Y_train)
 
 
 #Performance Evaluation
-print(decision_tree_model.score(X_test,Y_test))
-predictions=decision_tree_model.predict(X_test)
 from sklearn.metrics import confusion_matrix
-print(confusion_matrix(Y_test,predictions))
 from sklearn.metrics import classification_report
-print(classification_report(Y_test,predictions, target_names=['High', 'Low', 'Moderate']))
-print(4)
+print("Result 1: Decision Tree")
+print("Score: %f" % decision_tree_model.score(X_test,Y_test))
+predictions_decision_tree=decision_tree_model.predict(X_test)
+print("Confusion Matrix:")
+print(confusion_matrix(Y_test,predictions_decision_tree))
+print("Classification Report: ")
+print(classification_report(Y_test,predictions_decision_tree, target_names=['High', 'Low', 'Moderate']))
+
+plt.subplot(211)
+feature_label=['Age', 'Class Duration', 'Gender', 'Edu. Level',
+       'Inst. Type', 'IT Student', 'Location', 'Load-shedding',
+       'Fin. Condition', 'Internet Type', 'Network Type',
+       'Self Lms', 'Device']
+plt.bar(feature_label, decision_tree_model.feature_importances_)
+plt.title('Feature Importance: Decision Tree')
 
 
-#Feature Importance Analysis
-feature_name=X.columns
-print(decision_tree_model.feature_importances_)
-feature_importance=pd.DataFrame(decision_tree_model.feature_importances_,index=X.columns)
-plt.bar(range(len(decision_tree_model.feature_importances_)), decision_tree_model.feature_importances_)
-plt.xticks(range(len(decision_tree_model.feature_importances_)), X.columns)
+
+
+print("Result 2: Random Forest")
+print("Score: %f" % random_forest_model.score(X_test,Y_test))
+predictions_random_forest=random_forest_model.predict(X_test)
+print("Confusion Matrix:")
+print(confusion_matrix(Y_test,predictions_random_forest))
+print("Classification Report: ")
+print(classification_report(Y_test,predictions_random_forest, target_names=['High', 'Low', 'Moderate']))
+
+plt.subplot(212)
+plt.bar(feature_label, random_forest_model.feature_importances_)
+plt.title('Feature Importance: Random Forest')
 plt.show()
-
-tree.plot_tree(decision_tree_model,feature_names=X.columns,class_names={0:'High', 1: 'Low', 2: 'Moderate'},filled=True)
-plt.show()
-
-
-
 
 #histogram of columns of interest
 
