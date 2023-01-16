@@ -171,7 +171,7 @@ nn_model.add(Dense(86, activation='relu'))
 nn_model.add(BatchNormalization())
 nn_model.add(Dense(3, activation='softmax'))
 nn_model.compile(optimizer=Adam(learning_rate=0.001),loss='categorical_crossentropy',metrics=['accuracy'])
-nn_model.fit(X_train_scaled,Y_train_nn,epochs=50,batch_size=64)
+nn_model.fit(X_train_scaled,Y_train_nn,epochs=1,batch_size=64)
 score=nn_model.evaluate(X_test_scaled,Y_test_nn)
 print("Summary of the neural network model...")
 print(nn_model.summary())
@@ -183,3 +183,21 @@ print("Score: %f" % random_forest_model.score(X_test,Y_test))
 print("Result 2: Neural Network")
 print("Score: %f" % score[1])
 
+#save model
+import pickle
+with open('neural_network_model_crude.pickle','wb') as f:
+    pickle.dump(nn_model,f)
+
+import json
+columns={
+    'data_columns' : [col.lower() for col in feature_label]
+}
+with open("columns.json","w") as f:
+    f.write(json.dumps(columns))
+
+print("TEST")
+adaptivity_type=['High', 'Low', 'Moderate']
+ex=X.values[:1]
+pred_example=nn_model.predict(X.values[:1])
+idx=np.argmax(pred_example)
+print(adaptivity_type[idx])
